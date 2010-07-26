@@ -1,0 +1,13 @@
+cd java
+javac -d ../bin me/walz/mac/menu/*
+cd ../bin
+javah me.walz.mac.menu.MMenu
+javah me.walz.mac.menu.MMenuBar
+javah me.walz.mac.menu.MMenuItem
+mv *.h ../objc/
+cd ../objc
+cc -c -I/System/Library/Frameworks/JavaVM.framework/Headers OBCMMenu.m
+cc -c -I/System/Library/Frameworks/JavaVM.framework/Headers OBCMMenuBar.m
+cc -c -I/System/Library/Frameworks/JavaVM.framework/Headers OBCMMenuItem.m
+cc -dynamiclib -o libAppMenuBar.jnilib OBCMMenu.o OBCMMenuBar.o OBCMMenuItem.o -framework JavaVM -framework Cocoa
+mv libAppMenuBar.jnilib ../bin/
