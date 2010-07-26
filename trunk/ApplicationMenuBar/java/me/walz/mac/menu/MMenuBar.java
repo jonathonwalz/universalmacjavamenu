@@ -29,14 +29,6 @@ public class MMenuBar {
 		doAddMenu(menu);
 	}
 	
-	public static void setupMenu() {
-		
-	}
-	
-	private MMenuBar() {
-		
-	}
-	
 	static {
 		System.loadLibrary("AppMenuBar");
 	}
@@ -46,31 +38,35 @@ public class MMenuBar {
 			public void run() {
 				MMenu connection = new MMenu("Connection");
 				addMenu(connection);
-				connection.addMenuItem(new MMenuItem("New", new MMenuItemListener() {
+                MMenuItem item = new MMenuItem("New", new MMenuItemListener() {
 					@Override
 					public void menuItemClicked(MMenuItem item) {
 						// TODO Auto-generated method stub
-						
+						System.out.println("New");
 					}
-				}));
-				connection.addMenuItem(new MMenuItem("Close", new MMenuItemListener() {
+				});
+				connection.addMenuItem(item);
+                item.setKey("n");
+                item = new MMenuItem("Close", new MMenuItemListener() {
 					@Override
 					public void menuItemClicked(MMenuItem item) {
 						// TODO Auto-generated method stub
-						
+						System.out.println("Close");
 					}
-				}));
+				});
+				connection.addMenuItem(item);
+                item.setKey("w");
 				
 				MMenu window = new MMenu("Window");
 				addMenu(window);
 				
 				MMenu help = new MMenu("Help");
 				addMenu(help);
-				help.addMenuItem(new MMenuItem("Remote Client Help", new MMenuItemListener() {
+				help.addMenuItem(new MMenuItem("Help", new MMenuItemListener() {
 					@Override
 					public void menuItemClicked(MMenuItem item) {
 						// TODO Auto-generated method stub
-						
+						System.out.println("Help");
 					}
 				}));
 				

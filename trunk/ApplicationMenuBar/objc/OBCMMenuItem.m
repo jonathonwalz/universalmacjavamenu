@@ -31,6 +31,8 @@ static NSMutableArray *items;
         self.jref = (*env)->NewGlobalRef(env, item);
         [items addObject:self];
         
+        [self setTarget:self];
+        
         jfieldID fid;
         jclass cls = (*env)->GetObjectClass(env,item);
         fid = (*env)->GetFieldID(env, cls, "title","Ljava/lang/String;");
@@ -49,7 +51,14 @@ static NSMutableArray *items;
 }
 
 - (void)clicked {
-    
+    JNIEnv *env; 
+    (*cachedjvm)->GetEnv(cachedjvm,(void **)&env, JNI_VERSION_1_6);
+    jclass cls = (*env)->GetObjectClass(env, self.jref); 
+    jmethodID mid = (*env)->GetMethodID(env, cls, "wasClicked", "()V"); 
+    if (mid == NULL) {
+        return;
+    } 
+    (*env)->CallVoidMethod(env, self.jref, mid);
 }
 
 - (void)dealloc {
@@ -85,13 +94,49 @@ static NSMutableArray *items;
  * Signature: (Z)V
  */
 JNIEXPORT void JNICALL Java_me_walz_mac_menu_MMenuItem_checked(JNIEnv *env, jobject item, jboolean checked) {
-     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     OBCMMenuItem *itemObj = [OBCMMenuItem getMenuItemFrom:env item:item];
     if (itemObj!=nil) {
         if (checked)
             [itemObj setState:NSOnState];
         else
             [itemObj setState:NSOffState];
+    }
+    [pool release];
+}
+
+/*
+ * Class:     me_walz_mac_menu_MMenuItem
+ * Method:    enabled
+ * Signature: (Z)V
+ */
+JNIEXPORT void JNICALL Java_me_walz_mac_menu_MMenuItem_enabled (JNIEnv * env, jobject item, jboolean enabled) {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    OBCMMenuItem *itemObj = [OBCMMenuItem getMenuItemFrom:env item:item];
+    if (itemObj!=nil) {
+        if (enabled)
+            [itemObj setEnabled:YES];
+        else
+            [itemObj setEnabled:NO];
+    }
+    [pool release];
+}
+
+/*
+ * Class:     me_walz_mac_menu_MMenuItem
+ * Method:    key
+ * Signature: (Ljava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_me_walz_mac_menu_MMenuItem_key (JNIEnv *env, jobject item, jstring key) {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    OBCMMenuItem *itemObj = [OBCMMenuItem getMenuItemFrom:env item:item];
+    if (itemObj!=nil) {
+        const char *str = (*env)->GetStringUTFChars(env, key, NULL);
+        if (str!=NULL) {
+            NSString *string = [NSString stringWithUTF8String:str];
+            [itemObj setKeyEquivalent:string];
+            (*env)->ReleaseStringUTFChars(env,key,str);
+        }
     }
     [pool release];
 }

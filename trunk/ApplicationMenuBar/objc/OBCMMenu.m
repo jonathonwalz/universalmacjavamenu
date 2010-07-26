@@ -44,6 +44,8 @@ static NSMutableArray *menus;
                 (*env)->ReleaseStringUTFChars(env,jtitle,str);
             }
         }
+        
+        [self setAutoenablesItems:NO];
     }
     
     return self;
