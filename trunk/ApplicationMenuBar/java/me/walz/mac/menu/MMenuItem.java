@@ -20,15 +20,23 @@ public class MMenuItem {
 	private boolean checked;
     private boolean enabled;
 	private String key;
+    private final boolean seperator;
     
 	private native void checked(boolean checked);
 	private native void enabled(boolean checked);
     private native void key(String key);
     
+    public MMenuItem() {
+        this.title = null;
+        this.listener = null;
+        seperator = true;
+    }
+    
 	public MMenuItem(String title, MMenuItemListener listener) {
 		this.title = title;
 		this.listener = listener;
         this.key = "";
+        seperator = false;
 	}
 
 	public void wasClicked() {

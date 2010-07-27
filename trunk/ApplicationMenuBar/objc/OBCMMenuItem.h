@@ -20,12 +20,14 @@
 #import <Cocoa/Cocoa.h>
 #import "me_walz_mac_menu_MMenuItem.h"
 
-@interface OBCMMenuItem : NSMenuItem {
+@interface OBCMMenuItem : NSObject {
 @private
     jobject jref;
+    NSMenuItem *menuItem;
 }
 
 @property (nonatomic, assign) jobject jref;
+@property (nonatomic, retain) NSMenuItem *menuItem;
 
 - (id)initWithItem:(jobject)item inEnv:(JNIEnv*)env;
 + (OBCMMenuItem*)getMenuItemFrom:(JNIEnv*)env item:(jobject)item;
