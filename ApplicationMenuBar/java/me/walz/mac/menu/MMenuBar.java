@@ -15,11 +15,11 @@
 package me.walz.mac.menu;
 
 import java.util.ArrayList;
-
+import java.io.*;
 import javax.swing.JFrame;
 
 public class MMenuBar {
-	
+    public static boolean isLoaded;
 	private static ArrayList<MMenu> menus = new ArrayList<MMenu>();
 	
 	private native static void doAddMenu(MMenu menu);
@@ -30,7 +30,24 @@ public class MMenuBar {
 	}
 	
 	static {
-		System.loadLibrary("AppMenuBar");
+        try {
+            InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream("libAppMenuBar.jnilib");
+            if (in == null) {
+                throw new Exception("libname: libAppMenuBar.jnilib not found");
+            }
+                
+            File tmplib = File.createTempFile("libAppMenuBar","jnilib");
+            tmplib.deleteOnExit();
+            OutputStream out = new FileOutputStream(tmplib);
+            byte[] buf = new byte[1024];
+            for (int len; (len = in.read(buf)) != -1;) {
+                out.write(buf, 0, len);
+            }
+            in.close();
+            out.close();
+            System.load(tmplib.getAbsolutePath());
+            isLoaded = true;
+        } catch (Exception e) {isLoaded = false;}
 	}
 	
 	public static void main(String [] args) {

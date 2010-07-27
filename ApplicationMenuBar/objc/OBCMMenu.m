@@ -55,7 +55,7 @@ static NSMutableArray *menus;
     [menus removeObject:self];
     
     JNIEnv *env; 
-    (*cachedjvm)->GetEnv(cachedjvm,(void **)&env, JNI_VERSION_1_6);
+    (*cachedjvm)->GetEnv(cachedjvm,(void **)&env, JNI_VERSION_1_4);
     (*env)->DeleteGlobalRef(env, self.jref);
     
     [super dealloc];
@@ -92,7 +92,7 @@ JNIEXPORT void JNICALL Java_me_walz_mac_menu_MMenu_doAddMenuItem (JNIEnv *env, j
         if (itemObj==nil) {
             itemObj = [[[OBCMMenuItem alloc] initWithItem:item inEnv:env] autorelease];
         }
-        [menuObj addItem:itemObj];
+        [menuObj addItem:[itemObj menuItem]];
     }
     [pool release];
 }

@@ -25,24 +25,37 @@ static NSMutableArray *items;
 @implementation OBCMMenuItem
 
 @synthesize jref;
+@synthesize menuItem;
 
 - (id)initWithItem:(jobject)item inEnv:(JNIEnv*)env {
-    if ((self = [super initWithTitle:@"" action:@selector(clicked) keyEquivalent:@""])) {
+    if ((self = [super init])) {
         self.jref = (*env)->NewGlobalRef(env, item);
         [items addObject:self];
         
-        [self setTarget:self];
-        
         jfieldID fid;
         jclass cls = (*env)->GetObjectClass(env,item);
-        fid = (*env)->GetFieldID(env, cls, "title","Ljava/lang/String;");
-        if (fid!=NULL) {
-            jstring jtitle = (*env)->GetObjectField(env,item, fid);
-            const char *str = (*env)->GetStringUTFChars(env, jtitle, NULL);
-            if (str!=NULL) {
-                NSString *string = [NSString stringWithUTF8String:str];
-                [self setTitle:string];
-                (*env)->ReleaseStringUTFChars(env,jtitle,str);
+        
+        fid = (*env)->GetFieldID(env, cls, "seperator","Z");
+        
+        jboolean isSep = (*env)->GetBooleanField(env,item, fid);
+        
+        if (isSep) {
+            self.menuItem = [NSMenuItem separatorItem];
+        } else {
+            self.menuItem = [[NSMenuItem alloc] initWithTitle:@"" action:@selector(clicked) keyEquivalent:@""];
+            [self.menuItem release];
+            [self.menuItem setTarget:self];
+            
+            
+            fid = (*env)->GetFieldID(env, cls, "title","Ljava/lang/String;");
+            if (fid!=NULL) {
+                jstring jtitle = (*env)->GetObjectField(env,item, fid);
+                const char *str = (*env)->GetStringUTFChars(env, jtitle, NULL);
+                if (str!=NULL) {
+                    NSString *string = [NSString stringWithUTF8String:str];
+                    [self.menuItem setTitle:string];
+                    (*env)->ReleaseStringUTFChars(env,jtitle,str);
+                }
             }
         }
     }
@@ -52,8 +65,8 @@ static NSMutableArray *items;
 
 - (void)clicked {
     JNIEnv *env; 
-    (*cachedjvm)->GetEnv(cachedjvm,(void **)&env, JNI_VERSION_1_6);
-    jclass cls = (*env)->GetObjectClass(env, self.jref); 
+    (*cachedjvm)->GetEnv(cachedjvm,(void **)&env, JNI_VERSION_1_4);
+    jclass cls = (*env)->GetObjectClass(env, self.jref);
     jmethodID mid = (*env)->GetMethodID(env, cls, "wasClicked", "()V"); 
     if (mid == NULL) {
         return;
@@ -65,7 +78,7 @@ static NSMutableArray *items;
     [items removeObject:self];
     
     JNIEnv *env; 
-    (*cachedjvm)->GetEnv(cachedjvm,(void **)&env, JNI_VERSION_1_6);
+    (*cachedjvm)->GetEnv(cachedjvm,(void **)&env, JNI_VERSION_1_4);
     (*env)->DeleteGlobalRef(env, self.jref);
     
     [super dealloc];
@@ -96,11 +109,11 @@ static NSMutableArray *items;
 JNIEXPORT void JNICALL Java_me_walz_mac_menu_MMenuItem_checked(JNIEnv *env, jobject item, jboolean checked) {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     OBCMMenuItem *itemObj = [OBCMMenuItem getMenuItemFrom:env item:item];
-    if (itemObj!=nil) {
+    if (itemObj!=nil&&![itemObj.menuItem isSeparatorItem]) {
         if (checked)
-            [itemObj setState:NSOnState];
+            [itemObj.menuItem setState:NSOnState];
         else
-            [itemObj setState:NSOffState];
+            [itemObj.menuItem setState:NSOffState];
     }
     [pool release];
 }
@@ -113,11 +126,11 @@ JNIEXPORT void JNICALL Java_me_walz_mac_menu_MMenuItem_checked(JNIEnv *env, jobj
 JNIEXPORT void JNICALL Java_me_walz_mac_menu_MMenuItem_enabled (JNIEnv * env, jobject item, jboolean enabled) {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     OBCMMenuItem *itemObj = [OBCMMenuItem getMenuItemFrom:env item:item];
-    if (itemObj!=nil) {
+    if (itemObj!=nil&&![itemObj.menuItem isSeparatorItem]) {
         if (enabled)
-            [itemObj setEnabled:YES];
+            [itemObj.menuItem setEnabled:YES];
         else
-            [itemObj setEnabled:NO];
+            [itemObj.menuItem setEnabled:NO];
     }
     [pool release];
 }
@@ -130,11 +143,11 @@ JNIEXPORT void JNICALL Java_me_walz_mac_menu_MMenuItem_enabled (JNIEnv * env, jo
 JNIEXPORT void JNICALL Java_me_walz_mac_menu_MMenuItem_key (JNIEnv *env, jobject item, jstring key) {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     OBCMMenuItem *itemObj = [OBCMMenuItem getMenuItemFrom:env item:item];
-    if (itemObj!=nil) {
+    if (itemObj!=nil&&![itemObj.menuItem isSeparatorItem]) {
         const char *str = (*env)->GetStringUTFChars(env, key, NULL);
         if (str!=NULL) {
             NSString *string = [NSString stringWithUTF8String:str];
-            [itemObj setKeyEquivalent:string];
+            [itemObj.menuItem setKeyEquivalent:string];
             (*env)->ReleaseStringUTFChars(env,key,str);
         }
     }
