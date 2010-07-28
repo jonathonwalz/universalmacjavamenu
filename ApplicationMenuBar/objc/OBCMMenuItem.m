@@ -120,6 +120,25 @@ JNIEXPORT void JNICALL Java_me_walz_mac_menu_MMenuItem_checked(JNIEnv *env, jobj
 
 /*
  * Class:     me_walz_mac_menu_MMenuItem
+ * Method:    title
+ * Signature: (Ljava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_me_walz_mac_menu_MMenuItem_title (JNIEnv *env, jobject item, jstring jtitle) {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    OBCMMenuItem *itemObj = [OBCMMenuItem getMenuItemFrom:env item:item];
+    if (itemObj!=nil&&![itemObj.menuItem isSeparatorItem]) {
+        const char *str = (*env)->GetStringUTFChars(env, jtitle, NULL);
+        if (str!=NULL) {
+            NSString *string = [NSString stringWithUTF8String:str];
+            [itemObj.menuItem setTitle:string];
+            (*env)->ReleaseStringUTFChars(env,jtitle,str);
+        }
+    }
+    [pool release];
+}
+
+/*
+ * Class:     me_walz_mac_menu_MMenuItem
  * Method:    enabled
  * Signature: (Z)V
  */
