@@ -16,13 +16,14 @@ package me.walz.mac.menu;
 
 public class MMenuItem {
 	private final MMenuItemListener listener;
-	private final String title;
+	private String title;
 	private boolean checked;
     private boolean enabled;
 	private String key;
     private final boolean seperator;
     
 	private native void checked(boolean checked);
+    private native void title(String title);
 	private native void enabled(boolean checked);
     private native void key(String key);
     
@@ -47,6 +48,11 @@ public class MMenuItem {
 		return listener;
 	}
 
+    public void setTitle(String title) {
+        this.title = title;
+        title(title);
+    }
+    
 	public String getTitle() {
 		return title;
 	}
