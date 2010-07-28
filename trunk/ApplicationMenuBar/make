@@ -6,7 +6,9 @@ javah me.walz.mac.menu.MMenuBar
 javah me.walz.mac.menu.MMenuItem
 mv *.h ../objc/
 cd ../objc
-gcc -arch ppc -arch x86_64 -arch i386 -mmacosx-version-min=10.5 -Wall -Wshorten-64-to-32 -c -I/System/Library/Frameworks/JavaVM.framework/Headers *.m
+gcc -arch ppc -arch x86_64 -arch i386 -mmacosx-version-min=10.5 -Wall -Wshorten-64-to-32 -c -I/System/Library/Frameworks/JavaVM.framework/Headers OBCMMenuBar.m
+gcc -arch ppc -arch x86_64 -arch i386 -mmacosx-version-min=10.5 -Wall -Wshorten-64-to-32 -c -I/System/Library/Frameworks/JavaVM.framework/Headers OBCMMenu.m
+gcc -arch ppc -arch x86_64 -arch i386 -mmacosx-version-min=10.5 -Wall -Wshorten-64-to-32 -c -I/System/Library/Frameworks/JavaVM.framework/Headers OBCMMenuItem.m
 gcc -arch ppc -arch x86_64 -arch i386 -mmacosx-version-min=10.5 -Wall -Wshorten-64-to-32 -dynamiclib -o libAppMenuBar.jnilib OBCMMenu.o OBCMMenuBar.o OBCMMenuItem.o -framework JavaVM -framework Cocoa
 mv libAppMenuBar.jnilib ../bin/
 cd ../bin

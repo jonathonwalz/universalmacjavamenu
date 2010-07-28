@@ -30,6 +30,8 @@ public class MMenu {
 
 	public void removeMenuItem(MMenuItem item) {
 		int index = items.indexOf(item);
+        if (index<0)
+            return;
 		items.remove(index);
 		doRemoveMenuItem(index);
 	}
