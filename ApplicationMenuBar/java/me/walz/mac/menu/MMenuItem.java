@@ -17,12 +17,15 @@ package me.walz.mac.menu;
 public class MMenuItem {
 	private final MMenuItemListener listener;
 	private String title;
-	private boolean checked;
+	private int state;
     private boolean enabled;
 	private String key;
     private final boolean seperator;
+    public static final int OFF_STATE = 0;
+    public static final int ON_STATE = 1;
+    public static final int MIXED_STATE = 2;
     
-	private native void checked(boolean checked);
+	private native void state(int state);
     private native void title(String title);
 	private native void enabled(boolean checked);
     private native void key(String key);
@@ -57,13 +60,13 @@ public class MMenuItem {
 		return title;
 	}
 
-	public boolean getChecked() {
-		return checked;
+	public int getState() {
+		return state;
 	}
 
-	public void setChecked(boolean checked) {
-		this.checked = checked;
-		checked(checked);
+	public void setState(int state) {
+		this.state = state;
+		state(state);
 	}
     
     public boolean getEnabled() {
