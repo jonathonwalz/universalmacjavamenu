@@ -103,17 +103,24 @@ static NSMutableArray *items;
 
 /*
  * Class:     me_walz_mac_menu_MMenuItem
- * Method:    checked
- * Signature: (Z)V
+ * Method:    state
+ * Signature: (I)V
  */
-JNIEXPORT void JNICALL Java_me_walz_mac_menu_MMenuItem_checked(JNIEnv *env, jobject item, jboolean checked) {
+JNIEXPORT void JNICALL Java_me_walz_mac_menu_MMenuItem_state (JNIEnv *env, jobject item, jint state) {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     OBCMMenuItem *itemObj = [OBCMMenuItem getMenuItemFrom:env item:item];
     if (itemObj!=nil&&![itemObj.menuItem isSeparatorItem]) {
-        if (checked)
-            [itemObj.menuItem setState:NSOnState];
-        else
-            [itemObj.menuItem setState:NSOffState];
+        switch (state) {
+            case me_walz_mac_menu_MMenuItem_OFF_STATE:
+                [itemObj.menuItem setState:NSOffState];
+                break;
+            case me_walz_mac_menu_MMenuItem_ON_STATE:
+                [itemObj.menuItem setState:NSOnState];
+                break;
+            case me_walz_mac_menu_MMenuItem_MIXED_STATE:
+                [itemObj.menuItem setState:NSMixedState];
+                break;
+        }
     }
     [pool release];
 }
