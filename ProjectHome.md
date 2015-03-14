@@ -1,0 +1,1 @@
+A very simple JNI library to allow for a universal menu bar on a mac. This means that the menu entries will stay even when there is no JFrame present. At the moment it is not very complex and many operations are not supported. But for basic usage it **should** be fine.
